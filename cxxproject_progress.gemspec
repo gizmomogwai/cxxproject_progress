@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = CxxprojectProgress::VERSION
   gem.authors       = ["Christian Köstlin"]
   gem.email         = ["christian.koestlin@esrlabs.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{a ascii-art progressbar for the build progress}
+  gem.summary       = %q{}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
