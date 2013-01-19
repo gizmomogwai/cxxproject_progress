@@ -5,7 +5,7 @@ require 'rspec'
 task :package => :build
 
 def gems
-  ['frazzle', 'cxxproject', 'cxx', 'cxxproject_gcctoolchain']
+  ['frazzle', 'cxxproject', 'cxx', 'cxxproject_gcctoolchain', 'cxxproject_progress']
 end
 
 desc 'prepare acceptance tests'
