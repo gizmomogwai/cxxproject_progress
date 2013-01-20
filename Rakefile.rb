@@ -22,6 +22,7 @@ task :prepare_accept do
 end
 
 require 'rspec/core/rake_task'
+
 desc 'run acceptance tests'
 RSpec::Core::RakeTask.new(:accept) do |t|
   t.pattern = 'accept/**/*_spec.rb'
@@ -29,28 +30,11 @@ RSpec::Core::RakeTask.new(:accept) do |t|
     t.rspec_opts = '-r ./junit.rb -f JUnit -o build/test_details.xml'
   end
 end
-#
-#desc 'cleanup all built gems'
-#task :clean do
-#  projects.each do |p|
-#    cd "../#{p}" do
-#      sh 'rm -rf pkg'
-#    end
-#  end
-#end
-#
-#desc 'install prerequisites for build'
-#task :wipe_gems do
-#  sh "rvm --force gemset empty"
-#end
-#
-#desc 'install all built gems'
-#task :build_and_install_gems do
-#  projects.each do |p|
-#    cd "../#{p}" do
-#      sh 'rm -rf pkg'
-#      sh 'rake package'
-#      sh 'rake install'
-#    end
-#  end
-#end
+
+desc 'run specs tests'
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.pattern = 'spec/**/*_spec.rb'
+  if ENV['BUILD_SERVER']
+    t.rspec_opts = '-r ./junit.rb -f JUnit -o build/test_details.xml'
+  end
+end
