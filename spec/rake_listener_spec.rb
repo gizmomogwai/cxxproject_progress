@@ -6,10 +6,8 @@ describe Rake::Task do
 
   before(:each) do
     Cxxproject::Utils.cleanup_rake
-    task "mypre"
-    @t = task "test" => "mypre" do
-      puts 't'
-    end
+    @t1 = task "mypre"
+    @t2 = task "test" => "mypre"
   end
   after(:each) do
     Cxxproject::Utils.cleanup_rake
@@ -20,15 +18,15 @@ describe Rake::Task do
     l = mock
     Rake::add_listener(l)
 
-    l.should_receive(:before_execute).with('mypre')
-    l.should_receive(:after_execute).with('mypre')
-    l.should_receive(:before_prerequisites).with('mypre')
-    l.should_receive(:after_prerequisites).with('mypre')
-    l.should_receive(:before_prerequisites).with('test')
-    l.should_receive(:after_prerequisites).with('test')
-    l.should_receive(:before_execute).with('test')
-    l.should_receive(:after_execute).with('test')
-    @t.invoke
+    l.should_receive(:before_prerequisites).with('test').ordered
+    l.should_receive(:before_prerequisites).with('mypre').ordered
+    l.should_receive(:after_prerequisites).with('mypre').ordered
+    l.should_receive(:before_execute).with('mypre').ordered
+    l.should_receive(:after_execute).with('mypre').ordered
+    l.should_receive(:after_prerequisites).with('test').ordered
+    l.should_receive(:before_execute).with('test').ordered
+    l.should_receive(:after_execute).with('test').ordered
+    @t2.invoke
 
     Rake::remove_listener(l)
   end
@@ -37,7 +35,27 @@ describe Rake::Task do
     l = mock
     Rake::add_listener(l)
     Rake::remove_listener(l)
-    @t.invoke
+    @t2.invoke
+  end
+
+  it 'should call not more than expected' do
+    l = mock
+    l.should_receive(:before_prerequisites).with('mypre').ordered
+    l.should_receive(:after_prerequisites).with('mypre').ordered
+    l.should_receive(:before_execute).with('mypre').ordered
+    l.should_receive(:after_execute).with('mypre').ordered
+
+    l.should_receive(:before_prerequisites).with('test').ordered
+    l.should_receive(:after_prerequisites).with('test').ordered
+    l.should_receive(:before_execute).with('test').ordered
+    l.should_receive(:after_execute).with('test').ordered
+
+    Rake::add_listener(l)
+    @t1.invoke
+    @t1.invoke
+
+    @t2.invoke
+    Rake::remove_listener(l)
   end
 
   class DummyListener
@@ -53,7 +71,7 @@ describe Rake::Task do
   it "should work with only half implemented rake-listener" do
     l = DummyListener.new
     Rake::add_listener(l)
-    @t.invoke
+    @t2.invoke
     Rake::remove_listener(l)
     l.calls.should eq(['mypre', 'test'])
   end
