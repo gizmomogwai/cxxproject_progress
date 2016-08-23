@@ -1,5 +1,6 @@
 # CxxprojectProgress
 
+TODO: not working as expected at the moment.
 TODO: problem is, that non toolchain plugins are loaded after all tasks/building blocks are created -> so rake patches like progress_count will not happen/be initialized at the right time
 
 ## Installation
